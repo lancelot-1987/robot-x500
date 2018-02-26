@@ -4,7 +4,7 @@
 
 void TM_Ext_Test(struct TM16XX *display) {
 
-    TM_clear(display);
+    TM_Clear(display);
     TM_Ext_Spot(display, true);
     TM_Delay(DELAY);
     TM_Ext_Spot(display, false);

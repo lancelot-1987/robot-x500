@@ -47,7 +47,7 @@ extern void TM_sendData(struct TM16XX* display, uint32_t add, uint32_t data);
 
 extern void TM_send(struct TM16XX* display, uint32_t data);
 
-extern void TM_clear(struct TM16XX* display);
+extern void TM_Clear(struct TM16XX *display);
 
 extern void TM_Init(struct TM16XX* display, bool activateDisplay, uint32_t intensity);
 

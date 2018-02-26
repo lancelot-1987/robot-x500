@@ -32,11 +32,11 @@ void TM_Init(struct TM16XX *display, bool activateDisplay, uint32_t intensity) {
 
     TM_WritePin(display->stbPort, display->stb, LOW);;
     TM_send(display, 0xC0);
-    TM_clear(display);
+    TM_Clear(display);
     TM_WritePin(display->stbPort, display->stb, HIGH);;
 }
 
-void TM_clear(struct TM16XX *display) {
+void TM_Clear(struct TM16XX *display) {
     int i = 0;
     for (i = 0; i < 16; i++) {
         TM_send(display, 0x00);
