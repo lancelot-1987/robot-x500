@@ -1,4 +1,4 @@
-##BIG RED WARNING
+## BIG RED WARNING
 This repository is work in progress and you cannot use it as a ready-to-use firmware that delivers you all the same functions as you currently have in your vacuum cleaner. **DO NOT** use it unless you OK with the complete wipe of your firmware that will make your robot not working, not charging and not displaing anything. 
 
 It's **NOT POSSIBLE** to re-flash the default firmware, since the firmware is locked and nobody can dump it, so you won't be able to find it anywhere.  
