@@ -47,18 +47,28 @@
 
 /* Private define ------------------------------------------------------------*/
 
+#define AUDIO_RESET_Pin GPIO_PIN_3
+#define AUDIO_RESET_GPIO_Port GPIOE
+#define MAIN_BUS_Pin GPIO_PIN_6
+#define MAIN_BUS_GPIO_Port GPIOA
 #define DISPLAY_CLK_Pin GPIO_PIN_8
 #define DISPLAY_CLK_GPIO_Port GPIOE
 #define DISPLAY_DIO_Pin GPIO_PIN_10
 #define DISPLAY_DIO_GPIO_Port GPIOE
+#define RIGHT_BRUSH_Pin GPIO_PIN_14
+#define RIGHT_BRUSH_GPIO_Port GPIOB
 #define DISPLAY_STB_Pin GPIO_PIN_11
 #define DISPLAY_STB_GPIO_Port GPIOD
 #define CHARGE_ON_Pin GPIO_PIN_7
 #define CHARGE_ON_GPIO_Port GPIOC
+#define LEFT_BRUSH_Pin GPIO_PIN_8
+#define LEFT_BRUSH_GPIO_Port GPIOA
 #define DISPLAY_PLAN_Pin GPIO_PIN_10
 #define DISPLAY_PLAN_GPIO_Port GPIOC
 #define DISPLAY_SPOT_Pin GPIO_PIN_11
 #define DISPLAY_SPOT_GPIO_Port GPIOC
+#define AUDIO_DATA_Pin GPIO_PIN_4
+#define AUDIO_DATA_GPIO_Port GPIOB
 #define DISPLAY_HOME_Pin GPIO_PIN_0
 #define DISPLAY_HOME_GPIO_Port GPIOE
 #define DISPLAY_CLEAN_Pin GPIO_PIN_1
