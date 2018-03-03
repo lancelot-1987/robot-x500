@@ -59,6 +59,12 @@
 #define RIGHT_BRUSH_GPIO_Port GPIOB
 #define DISPLAY_STB_Pin GPIO_PIN_11
 #define DISPLAY_STB_GPIO_Port GPIOD
+#define IR_3_Pin GPIO_PIN_12
+#define IR_3_GPIO_Port GPIOD
+#define IR_2_Pin GPIO_PIN_13
+#define IR_2_GPIO_Port GPIOD
+#define IR_1_Pin GPIO_PIN_14
+#define IR_1_GPIO_Port GPIOD
 #define CHARGE_ON_Pin GPIO_PIN_7
 #define CHARGE_ON_GPIO_Port GPIOC
 #define LEFT_BRUSH_Pin GPIO_PIN_8

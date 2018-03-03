@@ -163,31 +163,6 @@ void X500_Right_Brush(bool on) { HAL_GPIO_WritePin(RIGHT_BRUSH_GPIO_Port, RIGHT_
 
 void X500_Right_Wheel(bool fwd) { HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, fwd ? GPIO_PIN_SET : GPIO_PIN_RESET); }
 
-void X500_Audio_Cmd(uint32_t data) {
-    //TODO: separate audio chip to the structure, change signature
-    HAL_GPIO_WritePin(AUDIO_RESET_GPIO_Port, AUDIO_RESET_Pin, GPIO_PIN_RESET);
-    HAL_Delay(5);
-    HAL_GPIO_WritePin(AUDIO_RESET_GPIO_Port, AUDIO_RESET_Pin, GPIO_PIN_SET);
-    HAL_Delay(5);
-    HAL_GPIO_WritePin(AUDIO_DATA_GPIO_Port, AUDIO_DATA_Pin, GPIO_PIN_RESET);
-    HAL_Delay(5);
-    for (int i = 0; i <8; i++) {
-        HAL_GPIO_WritePin(AUDIO_DATA_GPIO_Port, AUDIO_DATA_Pin, GPIO_PIN_SET);
-        if ( data & 1){
-            HAL_Delay(3);
-            HAL_GPIO_WritePin(AUDIO_DATA_GPIO_Port, AUDIO_DATA_Pin, GPIO_PIN_RESET);
-            HAL_Delay(1);
-        }else{
-            HAL_Delay(1);
-            HAL_GPIO_WritePin(AUDIO_DATA_GPIO_Port, AUDIO_DATA_Pin, GPIO_PIN_RESET);
-            HAL_Delay(3);
-        }
-        data >>= 1;
-    }
-    HAL_GPIO_WritePin(AUDIO_DATA_GPIO_Port, AUDIO_DATA_Pin, GPIO_PIN_SET);
-    HAL_Delay(1);
-}
-
 //Testing
 
 void X500_BatteryMon_Test(struct TM16XX *display, ADC_HandleTypeDef *adc) {

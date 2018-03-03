@@ -21,8 +21,6 @@ void X500_Main_Bus(bool on);
 
 void X500_Right_Wheel(bool fwd);
 
-void X500_Audio_Cmd(uint32_t data);
-
 
 //Testing
 

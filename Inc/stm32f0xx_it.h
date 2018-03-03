@@ -55,6 +55,7 @@ void SysTick_Handler(void);
 void RCC_CRS_IRQHandler(void);
 void DMA1_Channel1_IRQHandler(void);
 void ADC1_COMP_IRQHandler(void);
+void TIM16_IRQHandler(void);
 
 #ifdef __cplusplus
 }
