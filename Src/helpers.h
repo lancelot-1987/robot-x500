@@ -1,8 +1,7 @@
-
 #ifndef PANDAX500_TYPES_H
 #define PANDAX500_TYPES_H
 
-#include "stm32f0xx_hal.h"
+#include <stm32f0xx_hal.h>
 
 typedef struct {
     GPIO_TypeDef *Port;

@@ -1,7 +1,7 @@
 #ifndef ROBOT_DISPLAY_H
 #define ROBOT_DISPLAY_H
 
-#include "../tm16xx/TM16XX.h"
+#include <tm16xx/TM16XX.h>
 #include "DisplayConstants.h"
 
 static const int DELAY = 300;

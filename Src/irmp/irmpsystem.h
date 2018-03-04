@@ -14,7 +14,7 @@
 
 #ifndef _IRMPSYSTEM_H_
 #define _IRMPSYSTEM_H_
-#define STM32F0 1
+#define STM32F0
 #if !defined(_IRMP_H_) && !defined(_IRSND_H_)
 #  error please include only irmp.h or irsnd.h, not irmpsystem.h
 #endif

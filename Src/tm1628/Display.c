@@ -1,6 +1,5 @@
 #include <string.h>
 #include "Display.h"
-#include "DisplayConstants.h"
 
 void TM_Ext_Test(TM16XX *display) {
 

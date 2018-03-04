@@ -2,8 +2,7 @@
 #ifndef PANDAX500_WTV_H
 #define PANDAX500_WTV_H
 
-#include "stm32f0xx_hal.h"
-#include "../helpers.h"
+#include <helpers.h>
 
 typedef struct {
     PortPinTuple Reset;

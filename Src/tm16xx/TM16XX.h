@@ -21,8 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <helpers.h>
 #include "stm32f0xx_hal.h"
-#include "../helpers.h"
 
 typedef struct {
     PortPinTuple Dio;

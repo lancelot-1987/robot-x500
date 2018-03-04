@@ -2,7 +2,7 @@
 #define ROBOT_DISPLAYCONSTANTS_H
 
 #include <stdint.h>
-#include "../tm16xx/TM16XXFonts.h"
+#include <tm16xx/TM16XXFonts.h>
 
 extern const uint32_t OFF;
 extern const uint32_t ON;
