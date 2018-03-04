@@ -1,7 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : main.hpp
-  * Description        : This file contains the common defines of the application
+  * File Name          : USART.h
+  * Description        : This file provides code for the configuration
+  *                      of the USART instances.
   ******************************************************************************
   ** This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
@@ -36,84 +37,51 @@
   ******************************************************************************
   */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
-  /* Includes ------------------------------------------------------------------*/
+#ifndef __usart_H
+#define __usart_H
+#ifdef __cplusplus
+ extern "C" {
+#endif
 
 /* Includes ------------------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
+#include "stm32f0xx_hal.h"
+#include "main.h"
 
+/* USER CODE BEGIN Includes */
+#include <string.h>
+#include <stdlib.h>
 /* USER CODE END Includes */
 
-/* Private define ------------------------------------------------------------*/
-
-#define AUDIO_RESET_Pin GPIO_PIN_3
-#define AUDIO_RESET_GPIO_Port GPIOE
-#define RIGHT_BORDER_SENSOR_Pin GPIO_PIN_2
-#define RIGHT_BORDER_SENSOR_GPIO_Port GPIOA
-#define LEFT_BORDER_SENSOR_Pin GPIO_PIN_5
-#define LEFT_BORDER_SENSOR_GPIO_Port GPIOA
-#define MAIN_BUS_Pin GPIO_PIN_6
-#define MAIN_BUS_GPIO_Port GPIOA
-#define DISPLAY_CLK_Pin GPIO_PIN_8
-#define DISPLAY_CLK_GPIO_Port GPIOE
-#define DISPLAY_DIO_Pin GPIO_PIN_10
-#define DISPLAY_DIO_GPIO_Port GPIOE
-#define RIGHT_BRUSH_Pin GPIO_PIN_14
-#define RIGHT_BRUSH_GPIO_Port GPIOB
-#define DISPLAY_STB_Pin GPIO_PIN_11
-#define DISPLAY_STB_GPIO_Port GPIOD
-#define IR_3_Pin GPIO_PIN_12
-#define IR_3_GPIO_Port GPIOD
-#define IR_2_Pin GPIO_PIN_13
-#define IR_2_GPIO_Port GPIOD
-#define IR_1_Pin GPIO_PIN_14
-#define IR_1_GPIO_Port GPIOD
-#define RIGHT_WHEEL_START_Pin GPIO_PIN_6
-#define RIGHT_WHEEL_START_GPIO_Port GPIOC
-#define CHARGE_ON_Pin GPIO_PIN_7
-#define CHARGE_ON_GPIO_Port GPIOC
-#define LEFT_BRUSH_Pin GPIO_PIN_8
-#define LEFT_BRUSH_GPIO_Port GPIOA
-#define DISPLAY_PLAN_Pin GPIO_PIN_10
-#define DISPLAY_PLAN_GPIO_Port GPIOC
-#define DISPLAY_SPOT_Pin GPIO_PIN_11
-#define DISPLAY_SPOT_GPIO_Port GPIOC
-#define AUDIO_DATA_Pin GPIO_PIN_4
-#define AUDIO_DATA_GPIO_Port GPIOB
-#define DISPLAY_HOME_Pin GPIO_PIN_0
-#define DISPLAY_HOME_GPIO_Port GPIOE
-#define DISPLAY_CLEAN_Pin GPIO_PIN_1
-#define DISPLAY_CLEAN_GPIO_Port GPIOE
-
-/* ########################## Assert Selection ############################## */
-/**
-  * @brief Uncomment the line below to expanse the "assert_param" macro in the 
-  *        HAL drivers code
-  */
-/* #define USE_FULL_ASSERT    1U */
+extern UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
-#ifdef __cplusplus
- extern "C" {
-#endif
-void _Error_Handler(char *, int);
+extern void _Error_Handler(char *, int);
 
-#define Error_Handler() _Error_Handler(__FILE__, __LINE__)
+void MX_USART1_UART_Init(void);
+
+/* USER CODE BEGIN Prototypes */
+void HAL_UART_Print(char *s);
+void HAL_UART_Println(char *s);
+
+void HAL_UART_Print_Number(uint32_t data);
+
+void HAL_UART_Print_Numbern(uint32_t data);
+/* USER CODE END Prototypes */
+
 #ifdef __cplusplus
 }
 #endif
+#endif /*__ usart_H */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-*/ 
+  */
 
-#endif /* __MAIN_H */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

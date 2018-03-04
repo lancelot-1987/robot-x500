@@ -42,11 +42,11 @@
 #include "adc.h"
 #include "dma.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
-#include "irmp/irmp.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "irmp/irmp.h"
 #include "tm1628/Display.h"
 #include "x500.h"
 #include "wtv040/wtv.h"
@@ -82,67 +82,102 @@ IRMP_STATE irmp_state1;
 IRMP_STATE irmp_state2;
 IRMP_STATE irmp_state3;
 
-void TIM16_IRQHandler(void) {
-    /* USER CODE BEGIN TIM16_IRQn 0 */
-    irmp_ISR(IR_1_GPIO_Port, IR_1_Pin,
-             &irmp_state1);                                                        // call irmp ISR
-//    irmp_ISR(IR_2_GPIO_Port, IR_2_Pin,
-//             &irmp_state2);                                                        // call irmp ISR
-//    irmp_ISR(IR_3_GPIO_Port, IR_3_Pin,
-//             &irmp_state3);                                                        // call irmp ISR
+#define ADC_SIZE 5
+uint32_t adc_buf[ADC_SIZE];
 
-    /* USER CODE END TIM16_IRQn 0 */
-    HAL_TIM_IRQHandler(&htim16);
-    /* USER CODE BEGIN TIM16_IRQn 1 */
 
-    /* USER CODE END TIM16_IRQn 1 */
+//void TIM16_IRQHandler(void) {
+//    /* USER CODE BEGIN TIM16_IRQn 0 */
+//    irmp_ISR(IR_1_GPIO_Port, IR_1_Pin,
+//             &irmp_state1);                                                        // call irmp ISR
+////    irmp_ISR(IR_2_GPIO_Port, IR_2_Pin,
+////             &irmp_state2);                                                        // call irmp ISR
+////    irmp_ISR(IR_3_GPIO_Port, IR_3_Pin,
+////             &irmp_state3);                                                        // call irmp ISR
+//
+//    /* USER CODE END TIM16_IRQn 0 */
+//    HAL_TIM_IRQHandler(&htim16);
+//    /* USER CODE BEGIN TIM16_IRQn 1 */
+//
+//    /* USER CODE END TIM16_IRQn 1 */
+//}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+//    /* Prevent unused argument(s) compilation warning */
+//    char buf[10] = {0};
+//    for (int i = 0; i < ADC_SIZE; ++i) {
+//        sprintf(buf, "%d ", adc_buf[i]);
+//        HAL_UART_Transmit(&huart1, buf, 10, 0xFFFF);
+//    }
+//    HAL_UART_Transmit(&huart1, "\r\n", 2, 0xFFFF);
+
+    /* NOTE : This function should not be modified. When the callback is needed,
+              function HAL_ADC_ConvCpltCallback must be implemented in the user file.
+     */
+}
+
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
+{
+//    /* Prevent unused argument(s) compilation warning */
+    //TODO: understand why full conversion never happens
+    char buf[10] = {0};
+    for (int i = 0; i < ADC_SIZE; i++) {
+        HAL_UART_Print_Number(adc_buf[i]);
+    }
+    HAL_UART_Println("");
+    /* NOTE : This function should not be modified. When the callback is needed,
+              function HAL_ADC_ConvCpltCallback must be implemented in the user file.
+     */
 }
 
 
 /* USER CODE END 0 */
 
-int main(void) {
+int main(void)
+{
 
-    /* USER CODE BEGIN 1 */
-    /* USER CODE END 1 */
+  /* USER CODE BEGIN 1 */
+  /* USER CODE END 1 */
 
-    /* MCU Configuration----------------------------------------------------------*/
+  /* MCU Configuration----------------------------------------------------------*/
 
-    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-    HAL_Init();
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
 
-    /* USER CODE BEGIN Init */
-
-
-
-    /* USER CODE END Init */
-
-    /* Configure the system clock */
-    SystemClock_Config();
-
-    /* USER CODE BEGIN SysInit */
+  /* USER CODE BEGIN Init */
 
 
 
-    /* USER CODE END SysInit */
+  /* USER CODE END Init */
 
-    /* Initialize all configured peripherals */
-    MX_GPIO_Init();
-    MX_DMA_Init();
-    MX_ADC_Init();
-    MX_TIM16_Init();
+  /* Configure the system clock */
+  SystemClock_Config();
 
-    /* USER CODE BEGIN 2 */
+  /* USER CODE BEGIN SysInit */
 
 
 
-    /* USER CODE END 2 */
+  /* USER CODE END SysInit */
 
-    /* Infinite loop */
-    /* USER CODE BEGIN WHILE */
-    /* USER CODE END WHILE */
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_DMA_Init();
+  MX_TIM16_Init();
+  MX_USART1_UART_Init();
+  MX_ADC_Init();
 
-    /* USER CODE BEGIN 3 */
+  /* USER CODE BEGIN 2 */
+
+
+
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  /* USER CODE END WHILE */
+
+  /* USER CODE BEGIN 3 */
     struct TM16XX display;
 
     display.dioPort = DISPLAY_DIO_GPIO_Port;
@@ -167,108 +202,110 @@ int main(void) {
 
 //    X500_Bell_All(&display);
     X500_Main_Bus(true);
-//    X500_Bell_Inc(&display);
-
-    uint32_t data = 239;
-//    WTV040_Cmd(data);
-//    WTV040_Cmd(239);
-//    WTV040_Cmd(241);
-
-//    WTV040_OpenAmp();
-//    WTV040_Volume(0);
-//    for (int i = 0; i < 250; ++i) {
-//        WTV040_Cmd(i);
-//        HAL_Delay(100);
-//}
-
-    char buf[4] = {0};
-
-    HAL_TIM_Base_Start_IT(&htim16);
-    const int SIZE = 1024;
-    IRMP_DATA all[SIZE];
-    for (int j = 0; j < SIZE; ++j) {
-        all[j].command = 0;
-        all[j].address = 0;
-        all[j].flags = 0;
-        all[j].protocol = 0;
-    }
-    int current = 0;
-    for (;;) {
-        if (irmp_get_data(&irmp_data1, &irmp_state1)) {
-            sprintf(buf, "%d", current);
-            TM_Ext_Text(&display, buf);
-            bool found = false;
-            for (int i = 0; i < SIZE; i++) {
-                IRMP_DATA toCompare = all[i];
-                if (/*toCompare.address == irmp_data1.address &&*/ toCompare.command == irmp_data1.command) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                all[current] = irmp_data1;
-                current++;
-            }
-        }
-//        if (irmp_get_data(&irmp_data2, &irmp_state2)) {
-//            sprintf(buf, "%d", irmp_data2.address);
-//            TM_Ext_Text(&display, buf);
-//        }
-//        if (irmp_get_data(&irmp_data3, &irmp_state3)) {
-//            sprintf(buf, "%d", irmp_data3.address);
-//            TM_Ext_Text(&display, buf);
-//        }
-
-
+//    HAL_GPIO_WritePin(RIGHT_WHEEL_START_GPIO_Port, RIGHT_WHEEL_START_Pin, GPIO_PIN_SET);
+    //TODO: understand why it does not turn on without bell function
+//    X500_Right_Brush(true);
+//    X500_Left_Brush(true);
+    X500_Bell_Inc(&display);
+    HAL_ADC_Start_DMA(&hadc, (uint32_t *) adc_buf, ADC_SIZE);
+    while(1){
+//        HAL_ADC_Start_IT(&hadc);
+        HAL_Delay(10);
 
     }
 
 
-    /* USER CODE END 3 */
+//    char buf[4] = {0};
+//
+//    HAL_TIM_Base_Start_IT(&htim16);
+//    const int SIZE = 1024;
+//    IRMP_DATA all[SIZE];
+//    for (int j = 0; j < SIZE; ++j) {
+//        all[j].command = 0;
+//        all[j].address = 0;
+//        all[j].flags = 0;
+//        all[j].protocol = 0;
+//    }
+//    int current = 0;
+//    for (;;) {
+//        if (irmp_get_data(&irmp_data1, &irmp_state1)) {
+//            sprintf(buf, "%d", current);
+//            TM_Ext_Text(&display, buf);
+//            bool found = false;
+//            for (int i = 0; i < SIZE; i++) {
+//                IRMP_DATA toCompare = all[i];
+//                if (/*toCompare.address == irmp_data1.address &&*/ toCompare.command == irmp_data1.command) {
+//                    found = true;
+//                    break;
+//                }
+//            }
+//            if (!found) {
+//                all[current] = irmp_data1;
+//                current++;
+//                uint8_t str[100] = {0};
+//                sprintf(str, "Prot: %d, cmd: %d, addr: %d, flags: %d\r\n", irmp_data1.protocol, irmp_data1.command,
+//                       irmp_data1.address, irmp_data1.flags);
+//
+//                HAL_UART_Transmit(&huart1, str, 50, 0xFFFF);
+//            }
+//        }
+//    }
+
+
+  /* USER CODE END 3 */
 
 }
 
 /** System Clock Configuration
 */
-void SystemClock_Config(void) {
+void SystemClock_Config(void)
+{
 
-    RCC_OscInitTypeDef RCC_OscInitStruct;
-    RCC_ClkInitTypeDef RCC_ClkInitStruct;
-
-    /**Initializes the CPU, AHB and APB busses clocks 
-    */
-    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_HSI14;
-    RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-    RCC_OscInitStruct.HSI14State = RCC_HSI14_ON;
-    RCC_OscInitStruct.HSICalibrationValue = 16;
-    RCC_OscInitStruct.HSI14CalibrationValue = 16;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
-        _Error_Handler(__FILE__, __LINE__);
-    }
+  RCC_OscInitTypeDef RCC_OscInitStruct;
+  RCC_ClkInitTypeDef RCC_ClkInitStruct;
+  RCC_PeriphCLKInitTypeDef PeriphClkInit;
 
     /**Initializes the CPU, AHB and APB busses clocks 
     */
-    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
-                                  | RCC_CLOCKTYPE_PCLK1;
-    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
-    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = 16;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
 
-    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK) {
-        _Error_Handler(__FILE__, __LINE__);
-    }
+    /**Initializes the CPU, AHB and APB busses clocks 
+    */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1;
+  PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK1;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
 
     /**Configure the Systick interrupt time 
     */
-    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000);
+  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
 
     /**Configure the Systick 
     */
-    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+  HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
-    /* SysTick_IRQn interrupt configuration */
-    HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+  /* SysTick_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
 /* USER CODE BEGIN 4 */

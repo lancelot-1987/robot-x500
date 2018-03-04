@@ -12,7 +12,7 @@ The purpose of this repository is a) give a direction and make somebody's life e
 |Feature|State|State of investigation|
 |:---:|:---:|:---:|
 |Display|Fully works|Finished, needs refactoring|
-|Voice|Fully works|Needs implementation|
+|Voice|Fully works|Finished|
 |Wheels|Proof of concept|In progress|
 |Brush motors|Proof of concept|In progress|
 |Vacuum motor|Proof of concept|In progress|
@@ -20,10 +20,13 @@ The purpose of this repository is a) give a direction and make somebody's life e
 
 ### General workflow
 
-The most of peripherals (all the motors, most of sensors) are working only after main bus (controlled via GPIO pin PA6) is turned on (PA6 = 1).
+Looks like the most of peripherals (all the motors, most of sensors) are working only after main bus (controlled via GPIO pin PA6) is turned on (PA6 = 1).
+However, it could be just one of timer pins - since for some reason turning reduced amount of pins together with PA6 does not turn the motor on. 
+Ugh, needs investigation. 
+ 
 After that the following happens:
 
-1. Wheel motors are turned on in reverse-mode
+1. Wheel motors are turned on in reverse-mode (? - not clear, since it looks like too many pins were configured when investigation and that's why it turned on)
 2. Brush motors, vacuum motor, IR sensors and most of other peripherals have needed VCC. 
 3. After that we can control them by making controller pins high. 
 
@@ -44,16 +47,15 @@ IR sensor are standard and can be programmed mostly in the same way as with Ardu
 
 The board has 2 tags for the firmware flashing, respectively **JP1** (**USART1**) and **JP2** (ST-Link **SWD** port).
 ST-Link v2 is totally ok for flashing. The firmware is locked and will be erased when unlocking it, no way to dump it.
-No way to configure USART1 (not possible to flash after turning it on). Looks like both USART1 and SWD are only for firmware 
-flashing.    
+USART1 can be configured and used for debugging.    
 
 ```
   JP1 (USART)             JP2 (SWD)
 ---------------------------------------
 █████████  Pins       ███████████  Pins
 ███ GND █             ███ SWCLK █  PA14
-  █ RX  █  PA9          █ SWDIO █  PA13
-  █ TX  █  PA10         █   GND █
+  █ RX  █  PA10         █ SWDIO █  PA13
+  █ TX  █  PA9          █   GND █
 ███ VCC █             ███   VCC █
 █████████             ███████████
 ```
@@ -92,7 +94,7 @@ Model: [WTV 040](Schematics/datasheets/WTV040.pdf). The "one-line serial mode" i
 
 Busy pin of the chip leads to nowhere (free pin on the PCB).
 
-Settings volume works, playing also works. First 10-15 tracks are english, after them about 8 chinese. 
+See the API in [here](Src/wtv040/wtv.h).
 
 ### Motors
 
@@ -200,3 +202,12 @@ PC9 turns on/off vacuum motor
 |PA6|IR3 VCC|
 |GND|IR3 GND|
 |PD12|IR3|
+
+#### ADC (rough investigation, in progress)
+
+IN_1 - a) charge pin turned off. if charge not connected, has 1636, if charge connected - 2996
+b) if charge pin turned on. if charge not connected - 780, if connected - starts spiking up to 2300
+
+IN_5 - LEFT BORDER 
+IN_2 - RIGHT_BORDER
+

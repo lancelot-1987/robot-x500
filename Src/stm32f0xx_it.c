@@ -166,6 +166,20 @@ void ADC1_COMP_IRQHandler(void)
   /* USER CODE END ADC1_COMP_IRQn 1 */
 }
 
+/**
+* @brief This function handles TIM16 global interrupt.
+*/
+void TIM16_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM16_IRQn 0 */
+
+  /* USER CODE END TIM16_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim16);
+  /* USER CODE BEGIN TIM16_IRQn 1 */
+
+  /* USER CODE END TIM16_IRQn 1 */
+}
+
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */

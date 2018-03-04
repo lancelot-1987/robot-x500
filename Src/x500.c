@@ -25,7 +25,7 @@ uint32_t pins[] = {
 int PINS_SIZE = 16;
 
 bool X500_Bell_Excluded(GPIO_TypeDef *port, uint32_t pin) {
-    const int SIZE = 11;
+    const int SIZE = 10;
     //TODO: get rid of such size calculation
     struct PortPinTuple excluded[] = {
             {.port = GPIOA, .pin = GPIO_PIN_13}, //SWDIO
@@ -40,8 +40,18 @@ bool X500_Bell_Excluded(GPIO_TypeDef *port, uint32_t pin) {
             {.port = DISPLAY_CLEAN_GPIO_Port, .pin = DISPLAY_CLEAN_Pin},
             {.port = DISPLAY_PLAN_GPIO_Port, .pin = DISPLAY_PLAN_Pin},
             {.port = DISPLAY_SPOT_GPIO_Port, .pin = DISPLAY_SPOT_Pin},
+            {.port = RIGHT_WHEEL_START_GPIO_Port, .pin = RIGHT_WHEEL_START_Pin},
             //Charging
-            {.port = CHARGE_ON_GPIO_Port, .pin = CHARGE_ON_Pin},
+//            {.port = CHARGE_ON_GPIO_Port, .pin = CHARGE_ON_Pin},
+//            {.port = CHARGE_Y_GPIO_Port, .pin = CHARGE_Y_Pin},
+//            //IR
+//            {.port = IR_1_GPIO_Port, .pin = IR_1_Pin},
+//            {.port = IR_2_GPIO_Port, .pin = IR_2_Pin},
+//            {.port = IR_3_GPIO_Port, .pin = IR_3_Pin},
+//            //Audio
+//            {.port = AUDIO_DATA_GPIO_Port, .pin = AUDIO_DATA_Pin},
+//            {.port = AUDIO_RESET_GPIO_Port, .pin = AUDIO_RESET_Pin},
+
     };
     for (int i = 0; i < SIZE; i++) {
         if (port == excluded[i].port && pin == excluded[i].pin) {
@@ -54,18 +64,6 @@ bool X500_Bell_Excluded(GPIO_TypeDef *port, uint32_t pin) {
 
 void X500_Bell_Inc(struct TM16XX *display) {
     GPIO_InitTypeDef GPIO_InitStruct;
-    for (int i = 0; i < PORTS_SIZE; ++i) {
-        for (int j = 0; j < PINS_SIZE; ++j) {
-            if (X500_Bell_Excluded(ports[i], pins[j])) {
-                continue;
-            }
-            GPIO_InitStruct.Pin = pins[j];
-            GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-            GPIO_InitStruct.Pull = GPIO_NOPULL;
-            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-            HAL_GPIO_Init(ports[i], &GPIO_InitStruct);
-        }
-    }
     int i = 0;
     int j = 0;
 
@@ -109,6 +107,11 @@ void X500_Bell_Inc(struct TM16XX *display) {
         TM_Ext_Hours(display, i, true);
         TM_Ext_Minutes(display, j, true);
 
+        GPIO_InitStruct.Pin = pins[j];
+        GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+        HAL_GPIO_Init(ports[i], &GPIO_InitStruct);
         HAL_GPIO_WritePin(ports[i], pins[j], GPIO_PIN_SET);
         HAL_Delay(100);
         HAL_GPIO_WritePin(ports[i], pins[j], GPIO_PIN_RESET);
