@@ -3,6 +3,12 @@
 #define PANDAX500_WTV_H
 
 #include "stm32f0xx_hal.h"
+#include "../helpers.h"
+
+typedef struct {
+    PortPinTuple Reset;
+    PortPinTuple Data;
+} WTV040;
 
 #define CMD_SHUTDOWN 0xF0
 #define CMD_OPEN 0xF1
@@ -24,14 +30,16 @@
 #define CMD_BELL3_REVERSE 14
 #define CMD_TICK 15
 
+void WTV040_Cmd(uint32_t data, WTV040* chip);
 
+void WTV040_OpenAmp(WTV040 *chip);
 
+void WTV040_ShutdownAmp(WTV040 *chip);
 
-void WTV040_Cmd(uint32_t data);
-void WTV040_OpenAmp();
-void WTV040_ShutdownAmp();
-void WTV040_Cycle();
-void WTV040_Stop();
-void WTV040_Volume(uint32_t level);
+void WTV040_Cycle(WTV040 *chip);
+
+void WTV040_Stop(WTV040 *chip);
+
+void WTV040_Volume(uint32_t level, WTV040 *chip);
 
 #endif //PANDAX500_WTV_H

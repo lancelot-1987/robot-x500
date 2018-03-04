@@ -51,6 +51,8 @@
 #include "x500.h"
 #include "wtv040/wtv.h"
 #include "irmp/irmpsystem.h"
+#include "tm16xx/TM16XX.h"
+#include "helpers.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -102,8 +104,7 @@ uint32_t adc_buf[ADC_SIZE];
 //    /* USER CODE END TIM16_IRQn 1 */
 //}
 
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
-{
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
 //    /* Prevent unused argument(s) compilation warning */
 //    char buf[10] = {0};
 //    for (int i = 0; i < ADC_SIZE; ++i) {
@@ -112,30 +113,28 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 //    }
 //    HAL_UART_Transmit(&huart1, "\r\n", 2, 0xFFFF);
 
-    /* NOTE : This function should not be modified. When the callback is needed,
-              function HAL_ADC_ConvCpltCallback must be implemented in the user file.
-     */
+  /* NOTE : This function should not be modified. When the callback is needed,
+            function HAL_ADC_ConvCpltCallback must be implemented in the user file.
+   */
 }
 
-void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
-{
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc) {
 //    /* Prevent unused argument(s) compilation warning */
-    //TODO: understand why full conversion never happens
-    char buf[10] = {0};
-    for (int i = 0; i < ADC_SIZE; i++) {
-        HAL_UART_Print_Number(adc_buf[i]);
-    }
-    HAL_UART_Println("");
-    /* NOTE : This function should not be modified. When the callback is needed,
-              function HAL_ADC_ConvCpltCallback must be implemented in the user file.
-     */
+  //TODO: understand why full conversion never happens
+  char buf[10] = {0};
+  for (int i = 0; i < ADC_SIZE; i++) {
+    HAL_UART_Print_Number(adc_buf[i]);
+  }
+  HAL_UART_Println("");
+  /* NOTE : This function should not be modified. When the callback is needed,
+            function HAL_ADC_ConvCpltCallback must be implemented in the user file.
+   */
 }
 
 
 /* USER CODE END 0 */
 
-int main(void)
-{
+int main(void) {
 
   /* USER CODE BEGIN 1 */
   /* USER CODE END 1 */
@@ -178,41 +177,46 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-    struct TM16XX display;
+  TM16XX display = {
+      .Dio  = {.Port= DISPLAY_DIO_GPIO_Port, .Pin = DISPLAY_DIO_Pin},
+      .Stb  = {.Port= DISPLAY_STB_GPIO_Port, .Pin = DISPLAY_STB_Pin},
+      .Clk  = {.Port= DISPLAY_CLK_GPIO_Port, .Pin = DISPLAY_CLK_Pin}
+  };
 
-    display.dioPort = DISPLAY_DIO_GPIO_Port;
-    display.dio = DISPLAY_DIO_Pin;
-    display.clkPort = DISPLAY_CLK_GPIO_Port;
-    display.clk = DISPLAY_CLK_Pin;
-    display.stbPort = DISPLAY_STB_GPIO_Port;
-    display.stb = DISPLAY_STB_Pin;
+  WTV040 voice = {
+      .Data = {.Port = AUDIO_DATA_GPIO_Port, .Pin = AUDIO_DATA_Pin},
+      .Reset = {.Port = AUDIO_RESET_GPIO_Port, .Pin = AUDIO_RESET_Pin}
+  };
 
+  TM_Init(&display, true, 8);
+  TM_Brightness(&display, true, 7);
+  TM_Clear(&display);
+  TM_Ext_Text(&display, "1111");
 
-    TM_Init(&display, true, 8);
-    TM_Brightness(&display, true, 7);
-    TM_Clear(&display);
-    TM_Ext_Text(&display, "1111");
+  WTV040_OpenAmp(&voice);
+  WTV040_Volume(0, &voice);
+  WTV040_Cmd(CMD_BELL1, &voice);
 
-    __HAL_RCC_SYSCFG_CLK_ENABLE();
+  __HAL_RCC_SYSCFG_CLK_ENABLE();
 
-    X500_Charge(true);
+  X500_Charge(true);
 //    X500_Right_Wheel(true);
 //    X500_BatteryMon_Test(&display, &hadc);
 
 
 //    X500_Bell_All(&display);
-    X500_Main_Bus(true);
+  X500_Main_Bus(true);
 //    HAL_GPIO_WritePin(RIGHT_WHEEL_START_GPIO_Port, RIGHT_WHEEL_START_Pin, GPIO_PIN_SET);
-    //TODO: understand why it does not turn on without bell function
+  //TODO: understand why it does not turn on without bell function
 //    X500_Right_Brush(true);
 //    X500_Left_Brush(true);
-    X500_Bell_Inc(&display);
-    HAL_ADC_Start_DMA(&hadc, (uint32_t *) adc_buf, ADC_SIZE);
-    while(1){
+  X500_Bell_Inc(&display);
+  HAL_ADC_Start_DMA(&hadc, (uint32_t *) adc_buf, ADC_SIZE);
+  while (1) {
 //        HAL_ADC_Start_IT(&hadc);
-        HAL_Delay(10);
+    HAL_Delay(10);
 
-    }
+  }
 
 
 //    char buf[4] = {0};
@@ -258,50 +262,46 @@ int main(void)
 
 /** System Clock Configuration
 */
-void SystemClock_Config(void)
-{
+void SystemClock_Config(void) {
 
   RCC_OscInitTypeDef RCC_OscInitStruct;
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
   RCC_PeriphCLKInitTypeDef PeriphClkInit;
 
-    /**Initializes the CPU, AHB and APB busses clocks 
-    */
+  /**Initializes the CPU, AHB and APB busses clocks
+  */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = 16;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
     _Error_Handler(__FILE__, __LINE__);
   }
 
-    /**Initializes the CPU, AHB and APB busses clocks 
-    */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1;
+  /**Initializes the CPU, AHB and APB busses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+                                | RCC_CLOCKTYPE_PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
-  {
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK) {
     _Error_Handler(__FILE__, __LINE__);
   }
 
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1;
   PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK1;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-  {
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
     _Error_Handler(__FILE__, __LINE__);
   }
 
-    /**Configure the Systick interrupt time 
-    */
-  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+  /**Configure the Systick interrupt time
+  */
+  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000);
 
-    /**Configure the Systick 
-    */
+  /**Configure the Systick
+  */
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
   /* SysTick_IRQn interrupt configuration */
@@ -317,15 +317,15 @@ void SystemClock_Config(void)
   * @retval None
   */
 void _Error_Handler(char *file, int line) {
-    /* USER CODE BEGIN Error_Handler_Debug */
+  /* USER CODE BEGIN Error_Handler_Debug */
 
-    /* User can add his own implementation to report the HAL error return state */
+  /* User can add his own implementation to report the HAL error return state */
 
-    while (1) {
+  while (1) {
 
-    }
+  }
 
-    /* USER CODE END Error_Handler_Debug */
+  /* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef USE_FULL_ASSERT

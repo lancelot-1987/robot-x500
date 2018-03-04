@@ -2,7 +2,7 @@
 #include "Display.h"
 #include "DisplayConstants.h"
 
-void TM_Ext_Test(struct TM16XX *display) {
+void TM_Ext_Test(TM16XX *display) {
 
     TM_Clear(display);
     TM_Ext_Spot(display, true);
@@ -40,22 +40,22 @@ void TM_Ext_Test(struct TM16XX *display) {
     TM_Ext_Hours(display, 0, false);
 
 }
-void TM_Ext_Spot(struct TM16XX *display, bool on) {
+void TM_Ext_Spot(TM16XX *display, bool on) {
     TM_sendData(display, SPOT_ADDR1, on ? ON_HALF1 : OFF);
     TM_sendData(display, SPOT_ADDR2, on ? ON_HALF2 : OFF);
 }
-void TM_Ext_Clean(struct TM16XX *display, bool on) {
+void TM_Ext_Clean(TM16XX *display, bool on) {
     TM_sendData(display, CLEAN_ADDR, on ? ON_FULL : OFF);
 }
-void TM_Ext_Hours(struct TM16XX *display, int hours, bool on) {
+void TM_Ext_Hours(TM16XX *display, int hours, bool on) {
     TM_sendData(display, SEG1_ADDR, on ? NUMBER_FONT[hours / 10] : OFF);
     TM_sendData(display, SEG2_ADDR, on ? NUMBER_FONT[hours % 10] : OFF);
 }
-void TM_Ext_Minutes(struct TM16XX *display, int hours, bool on) {
+void TM_Ext_Minutes(TM16XX *display, int hours, bool on) {
     TM_sendData(display, SEG3_ADDR, on ? NUMBER_FONT[hours / 10] : OFF);
     TM_sendData(display, SEG4_ADDR, on ? NUMBER_FONT[hours % 10] : OFF);
 }
-void TM_Ext_Line(struct TM16XX *display, const char *text) {
+void TM_Ext_Line(TM16XX *display, const char *text) {
     display->buffer = text;
     if (display->bufferPosition >= strlen(display->buffer)) {
         display->bufferPosition = 0;
@@ -67,7 +67,7 @@ void TM_Ext_Line(struct TM16XX *display, const char *text) {
     display->bufferPosition++;
     TM_Delay(DELAY);
 }
-void TM_Ext_Text(struct TM16XX *display, const char *text) {
+void TM_Ext_Text(TM16XX *display, const char *text) {
     display->buffer = text;
     display->bufferPosition = 0;
     TM_sendData(display, SEG1_ADDR, FONT_DEFAULT[display->buffer[0] - 32]);
@@ -75,22 +75,22 @@ void TM_Ext_Text(struct TM16XX *display, const char *text) {
     TM_sendData(display, SEG3_ADDR, FONT_DEFAULT[display->buffer[2] - 32]);
     TM_sendData(display, SEG4_ADDR, FONT_DEFAULT[display->buffer[3] - 32]);
 }
-void TM_Ext_Trash(struct TM16XX *display, bool on) {
+void TM_Ext_Trash(TM16XX *display, bool on) {
     TM_sendData(display, TRASH_ADDR, on ? ON : OFF);
 }
-void TM_Ext_Home(struct TM16XX *display, bool on) {
+void TM_Ext_Home(TM16XX *display, bool on) {
     TM_sendData(display, HOME_ADDR1, on ? ON_HALF1 : OFF);
     TM_sendData(display, HOME_ADDR2, on ? ON_HALF2 : OFF);
 }
-void TM_Ext_Plan(struct TM16XX *display, bool on) {
+void TM_Ext_Plan(TM16XX *display, bool on) {
     TM_sendData(display, PLAN_ADDR, on ? ON : OFF);
 }
-void TM_Ext_ClearText(struct TM16XX *display) {
+void TM_Ext_ClearText(TM16XX *display) {
     TM_Ext_Text(display, "    ");
 }
 
 
-void TM_Ext_HeartBeat(struct TM16XX *display) {
+void TM_Ext_HeartBeat(TM16XX *display) {
     for (int i = 0; i < 7; i++) {
         TM_Brightness(display, true, i);
         TM_Delay(10);

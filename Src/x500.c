@@ -27,20 +27,20 @@ int PINS_SIZE = 16;
 bool X500_Bell_Excluded(GPIO_TypeDef *port, uint32_t pin) {
     const int SIZE = 10;
     //TODO: get rid of such size calculation
-    struct PortPinTuple excluded[] = {
-            {.port = GPIOA, .pin = GPIO_PIN_13}, //SWDIO
-            {.port = GPIOA, .pin = GPIO_PIN_14}, //SWCLK
-            {.port = GPIOA, .pin = GPIO_PIN_6},  //MAIN_BUS
+    PortPinTuple excluded[] = {
+            {.Port = GPIOA, .Pin = GPIO_PIN_13}, //SWDIO
+            {.Port = GPIOA, .Pin = GPIO_PIN_14}, //SWCLK
+            {.Port = GPIOA, .Pin = GPIO_PIN_6},  //MAIN_BUS
             //Display
-            {.port = DISPLAY_DIO_GPIO_Port, .pin = DISPLAY_DIO_Pin},
-            {.port = DISPLAY_CLK_GPIO_Port, .pin = DISPLAY_CLK_Pin},
-            {.port = DISPLAY_STB_GPIO_Port, .pin = DISPLAY_STB_Pin},
+            {.Port = DISPLAY_DIO_GPIO_Port, .Pin = DISPLAY_DIO_Pin},
+            {.Port = DISPLAY_CLK_GPIO_Port, .Pin = DISPLAY_CLK_Pin},
+            {.Port = DISPLAY_STB_GPIO_Port, .Pin = DISPLAY_STB_Pin},
             //Display buttons
-            {.port = DISPLAY_HOME_GPIO_Port, .pin = DISPLAY_HOME_Pin},
-            {.port = DISPLAY_CLEAN_GPIO_Port, .pin = DISPLAY_CLEAN_Pin},
-            {.port = DISPLAY_PLAN_GPIO_Port, .pin = DISPLAY_PLAN_Pin},
-            {.port = DISPLAY_SPOT_GPIO_Port, .pin = DISPLAY_SPOT_Pin},
-            {.port = RIGHT_WHEEL_START_GPIO_Port, .pin = RIGHT_WHEEL_START_Pin},
+            {.Port = DISPLAY_HOME_GPIO_Port, .Pin = DISPLAY_HOME_Pin},
+            {.Port = DISPLAY_CLEAN_GPIO_Port, .Pin = DISPLAY_CLEAN_Pin},
+            {.Port = DISPLAY_PLAN_GPIO_Port, .Pin = DISPLAY_PLAN_Pin},
+            {.Port = DISPLAY_SPOT_GPIO_Port, .Pin = DISPLAY_SPOT_Pin},
+            {.Port = RIGHT_WHEEL_START_GPIO_Port, .Pin = RIGHT_WHEEL_START_Pin},
             //Charging
 //            {.port = CHARGE_ON_GPIO_Port, .pin = CHARGE_ON_Pin},
 //            {.port = CHARGE_Y_GPIO_Port, .pin = CHARGE_Y_Pin},
@@ -54,7 +54,7 @@ bool X500_Bell_Excluded(GPIO_TypeDef *port, uint32_t pin) {
 
     };
     for (int i = 0; i < SIZE; i++) {
-        if (port == excluded[i].port && pin == excluded[i].pin) {
+        if (port == excluded[i].Port && pin == excluded[i].Pin) {
             return true;
         }
     }
@@ -62,7 +62,7 @@ bool X500_Bell_Excluded(GPIO_TypeDef *port, uint32_t pin) {
 }
 
 
-void X500_Bell_Inc(struct TM16XX *display) {
+void X500_Bell_Inc(TM16XX *display) {
     GPIO_InitTypeDef GPIO_InitStruct;
     int i = 0;
     int j = 0;
@@ -118,7 +118,7 @@ void X500_Bell_Inc(struct TM16XX *display) {
         HAL_Delay(100);
     }
 }
-void X500_Bell_All(struct TM16XX *display) {
+void X500_Bell_All(TM16XX *display) {
     GPIO_InitTypeDef GPIO_InitStruct;
     for (int i = 0; i < PORTS_SIZE; ++i) {
         for (int j = 0; j < PINS_SIZE; ++j) {
@@ -168,7 +168,7 @@ void X500_Right_Wheel(bool fwd) { HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, fwd ? GP
 
 //Testing
 
-void X500_BatteryMon_Test(struct TM16XX *display, ADC_HandleTypeDef *adc) {
+void X500_BatteryMon_Test(TM16XX *display, ADC_HandleTypeDef *adc) {
     while (1) {
         int max = 100;
         uint32_t value = 0;
